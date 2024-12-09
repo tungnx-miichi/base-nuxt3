@@ -1,0 +1,24 @@
+# Bỏ qua node_modules
+node_modules/
+
+# Bỏ qua file tạm
+*.log
+*.tmp
+*.nuxt
+*.output
+
+# Bỏ qua build output
+dist/
+build/
+
+# Bỏ qua file môi trường
+.env
+.env.local
+
+# Bỏ qua các thư mục IDE
+.vscode/
+.idea/
+
+# Bỏ qua hệ điều hành file
+.DS_Store
+Thumbs.db

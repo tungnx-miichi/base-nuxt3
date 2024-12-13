@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import { onMounted } from 'vue';
+import Map from '../components/Map.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <Map />
   </main>
 </template>

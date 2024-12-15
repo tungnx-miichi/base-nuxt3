@@ -38,7 +38,7 @@ onMounted(() => {
   geoJsonData.value.features = test
 
   // Instance map
-  mapInstance.value = L.map(map.value).setView([37.7503, 140.4677], 5) // Coordinates
+  mapInstance.value = L.map(map.value, {minZoom: 3}).setView([37.7503, 140.4677], 5) // Coordinates
 
   // Add Tile Layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -47,24 +47,24 @@ onMounted(() => {
   }).addTo(mapInstance.value)
 
   // Add legend
-  const legend = L.control({ position: 'bottomright' })
-  legend.onAdd = () => {
-    const div = L.DomUtil.create('div', 'info legend')
-    const grades = [0, 10, 20, 50, 100, 200, 500, 1000]
+  // const legend = L.control({ position: 'bottomright' })
+  // legend.onAdd = () => {
+  //   const div = L.DomUtil.create('div', 'info legend')
+  //   const grades = [0, 10, 20, 50, 100, 200, 500, 1000]
 
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (let i = 0; i < grades.length; i++) {
-      div.innerHTML +=
-        '<i style="background:' +
-        getColor(grades[i] + 1) +
-        '"></i> ' +
-        grades[i] +
-        (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+')
-    }
+  //   // loop through our density intervals and generate a label with a colored square for each interval
+  //   for (let i = 0; i < grades.length; i++) {
+  //     div.innerHTML +=
+  //       '<i style="background:' +
+  //       getColor(grades[i] + 1) +
+  //       '"></i> ' +
+  //       grades[i] +
+  //       (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+')
+  //   }
 
-    return div
-  }
-  legend.addTo(mapInstance.value)
+  //   return div
+  // }
+  // legend.addTo(mapInstance.value)
 
   // Add GeoJSON to map
   geoJsonLayer.value = L.geoJSON(geoJsonData.value, {
@@ -77,31 +77,38 @@ onMounted(() => {
       dashArray: '3',
       fillOpacity: 1,
     }),
-    onEachFeature: (feature, layer) => {
+    // onEachFeature: (feature, layer) => {
       // Add tooltip
-      const tooltip = layer.bindTooltip(feature.properties.name, {
-        direction: 'center',
-        permanent: true,
-        className: 'custom-tooltip',
-      })
+      // const tooltip = layer.bindTooltip(feature.properties.name, {
+      //   direction: 'center',
+      //   permanent: true,
+      //   className: 'custom-tooltip',
+      // })
 
-      layer.tooltipInstance = tooltip
-    },
+      // layer.tooltipInstance = tooltip
+    // },
   }).addTo(mapInstance.value)
 
-  // Listen event zoom map
-  mapInstance.value.on('zoom', () => {
-    const currentZoom = mapInstance.value.getZoom()
-    geoJsonLayer.value.eachLayer((layer) => {
-      if (layer._map) {
-        if (currentZoom < zoomLevelToHideTooltip) {
-          layer.closeTooltip() // Hide tooltip
-        } else {
-          layer.openTooltip() // Show tooltip
-        }
+  // Loại bỏ tất cả tile layers (nếu có)
+  mapInstance.value.eachLayer((layer) => {
+      if (layer._url) {
+        mapInstance.value.removeLayer(layer)
       }
     })
-  })
+
+  // Listen event zoom map
+  // mapInstance.value.on('zoom', () => {
+  //   const currentZoom = mapInstance.value.getZoom()
+  //   geoJsonLayer.value.eachLayer((layer) => {
+  //     if (layer._map) {
+  //       if (currentZoom < zoomLevelToHideTooltip) {
+  //         layer.closeTooltip() // Hide tooltip
+  //       } else {
+  //         layer.openTooltip() // Show tooltip
+  //       }
+  //     }
+  //   })
+  // })
 
   // Render color map
   function getColor(d) {
@@ -132,7 +139,7 @@ onMounted(() => {
 <style lang="css" scoped>
 .map-container {
   width: 100%;
-  height: 500px;
+  height: calc(100vh - 36px);
 }
 :deep() {
   .legend {
